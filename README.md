@@ -1,5 +1,5 @@
 # 펫돌이(petdori) API 서버
-소프트웨어 마에스트로 14기 솜사탕팀 - 펫도리 API 서버 레포지토리
+소프트웨어 마에스트로 14기 솜사탕팀 - 펫돌이(petdori) API 서버 레포지토리
 
 ## 실행 방법
 - `applcation.properties` 작성 (or `appplication.yml`)
