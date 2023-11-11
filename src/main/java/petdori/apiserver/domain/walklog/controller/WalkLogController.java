@@ -3,11 +3,11 @@ package petdori.apiserver.domain.walklog.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import petdori.apiserver.domain.walklog.dto.response.MonthlyLogResponseDto;
+import petdori.apiserver.domain.walklog.dto.response.WalkLogDetailResponseDto;
+import petdori.apiserver.domain.walklog.dto.response.WalkLogSummaryResponseDto;
 import petdori.apiserver.domain.walklog.repository.WalkLogRepository.RecentlyLogDto;
 import petdori.apiserver.domain.walklog.service.WalkLogService;
 import petdori.apiserver.global.common.BaseResponse;
-
 import java.util.List;
 
 @Slf4j
@@ -18,17 +18,28 @@ public class WalkLogController {
     private final WalkLogService walkLogService;
 
     @GetMapping("/recently-logs")
-    public BaseResponse<List<RecentlyLogDto>> getRecentlyLogs() {
-        List<RecentlyLogDto> recentlyLogs = walkLogService
+    public BaseResponse<List<RecentlyLogDto>> getRecentlyWalkLogs() {
+        List<RecentlyLogDto> recentlyWalkLogs = walkLogService
                 .getWalkLogsForLast30days();
-        return BaseResponse.createSuccessResponse(recentlyLogs);
+        return BaseResponse.createSuccessResponse(recentlyWalkLogs);
     }
 
     @GetMapping("/monthly-logs")
-    public BaseResponse<List<MonthlyLogResponseDto>> getMonthlyLogs(@RequestParam(value = "year") int year,
-                                                                     @RequestParam(value = "month") int month) {
-        List<MonthlyLogResponseDto> monthlyLogs = walkLogService.getMonthlyLogs(year, month);
-        return BaseResponse.createSuccessResponse(monthlyLogs);
+    public BaseResponse<List<WalkLogSummaryResponseDto>> getMonthlyWalkLogs(@RequestParam(value = "year") int year,
+                                                                        @RequestParam(value = "month") int month) {
+        List<WalkLogSummaryResponseDto> monthlyWalkLogs = walkLogService.getMonthlyWalkLogs(year, month);
+        return BaseResponse.createSuccessResponse(monthlyWalkLogs);
     }
 
+    @GetMapping("/daily-logs")
+    public BaseResponse<List<WalkLogSummaryResponseDto>> getDailyWalkLogs(@RequestParam(value = "date") String walkedDate) {
+        List<WalkLogSummaryResponseDto> monthlyWalkLogs = walkLogService.getDailyWalkLogs(walkedDate);
+        return BaseResponse.createSuccessResponse(monthlyWalkLogs);
+    }
+
+    @GetMapping("/{logId}")
+    public BaseResponse<WalkLogDetailResponseDto> getWalkLogDetail(@PathVariable Long logId) {
+        WalkLogDetailResponseDto walkLogDetail = walkLogService.getLogDetails(logId);
+        return BaseResponse.createSuccessResponse(walkLogDetail);
+    }
 }

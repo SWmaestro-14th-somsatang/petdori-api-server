@@ -9,7 +9,7 @@ import java.time.LocalTime;
 
 @Getter
 @Builder
-public class MonthlyLogResponseDto {
+public class WalkLogSummaryResponseDto {
     private Long id;
 
     @JsonProperty("walking_image_url")
@@ -24,7 +24,7 @@ public class MonthlyLogResponseDto {
     @JsonProperty("walked_distance")
     private BigDecimal walkedDistance;
 
-    MonthlyLogResponseDto(Long id, String walkingImageUrl, LocalDateTime startedTime, LocalTime walkingTime, BigDecimal walkedDistance) {
+    WalkLogSummaryResponseDto(Long id, String walkingImageUrl, LocalDateTime startedTime, LocalTime walkingTime, BigDecimal walkedDistance) {
         this.id = id;
         this.walkingImageUrl = walkingImageUrl;
         this.startedTime = startedTime;

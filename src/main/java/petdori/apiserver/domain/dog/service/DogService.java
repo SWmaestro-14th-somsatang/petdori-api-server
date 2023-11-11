@@ -20,6 +20,7 @@ import petdori.apiserver.domain.auth.exception.member.MemberNotExistException;
 import petdori.apiserver.domain.dog.repository.DogRepository;
 import petdori.apiserver.domain.dog.repository.DogTypeRepository;
 import petdori.apiserver.domain.auth.repository.MemberRepository;
+import petdori.apiserver.global.common.MemberExtractor;
 import petdori.apiserver.global.common.S3Uploader;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,18 +30,14 @@ import java.util.List;
 @Slf4j
 @Service
 public class DogService {
-    private final MemberRepository memberRepository;
+    private final MemberExtractor memberExtractor;
     private final DogTypeRepository dogTypeRepository;
     private final DogRepository dogRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional
     public void registerDog(MultipartFile dogImage, DogRegisterRequestDto dogRegisterRequestDto) {
-        // 인증된 사용자이므로 이메일을 가져올 수 있다
-        String ownerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member owner = memberRepository.findByEmail(ownerEmail)
-                .orElseThrow(() -> new MemberNotExistException(ownerEmail));
-
+        Member owner = memberExtractor.getAuthenticatedMember();
         DogType dogType = dogTypeRepository.findByTypeName(dogRegisterRequestDto.getDogType())
                 .orElseThrow(() -> new DogTypeNotExistException(dogRegisterRequestDto.getDogType()));
         // 클라이언트가 반려견 이미지를 첨부하지 않았을 경우에 대한 처리
@@ -65,11 +62,7 @@ public class DogService {
     @Transactional(readOnly = true)
     public List<MyDogResponseDto> getMyAllDogs() {
         List<MyDogResponseDto> myDogs = new ArrayList<>();
-
-        // 인증된 사용자이므로 이메일을 가져올 수 있다
-        String ownerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member owner = memberRepository.findByEmail(ownerEmail)
-                .orElseThrow(() -> new MemberNotExistException(ownerEmail));
+        Member owner = memberExtractor.getAuthenticatedMember();
 
         for (Dog dog : owner.getDogs()) {
             Long dogId = dog.getId();
@@ -113,11 +106,8 @@ public class DogService {
     }
 
     private void validateDogOwner(Dog dog) {
-        // 인증된 사용자이므로 이메일을 가져올 수 있다
-        String ownerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member ownerFromEmail = memberRepository.findByEmail(ownerEmail)
-                .orElseThrow(() -> new MemberNotExistException(ownerEmail));
-
+        // 현재 인증된 사용자와 반려견의 주인이 일치하는지 확인
+        Member ownerFromEmail = memberExtractor.getAuthenticatedMember();
         Member ownerFromDog = dog.getOwner();
 
         if (!ownerFromEmail.equals(ownerFromDog)) {

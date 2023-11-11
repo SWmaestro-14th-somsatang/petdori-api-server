@@ -10,6 +10,7 @@ import petdori.apiserver.global.common.BaseTimeEntity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,6 +44,6 @@ public class WalkLog extends BaseTimeEntity {
     @Column(nullable = true, length = 255)
     private String walkingImageUrl;
 
-
-
+    @OneToMany(mappedBy = "walkLog", cascade = CascadeType.ALL)
+    private List<DogWalkLog> dogWalkLogs;
 }

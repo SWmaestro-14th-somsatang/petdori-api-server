@@ -108,7 +108,6 @@ public class AuthService {
     public JwtResponseDto reIssue(String accessToken, String refreshToken) {
         Authentication authentication = jwtProvider.getAuthenticationFromToken(accessToken);
         String email = authentication.getName();
-        log.info("액세스에서 뽑은 email: {}", email);
 
         String refreshTokenAtRedis = refreshTokenService.getRefreshToken(email);
 

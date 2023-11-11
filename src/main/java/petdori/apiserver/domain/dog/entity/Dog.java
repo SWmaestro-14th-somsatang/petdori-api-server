@@ -5,10 +5,12 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import petdori.apiserver.domain.dog.dto.request.DogRegisterRequestDto;
+import petdori.apiserver.domain.walklog.entity.DogWalkLog;
 import petdori.apiserver.global.common.BaseTimeEntity;
 import petdori.apiserver.domain.auth.entity.member.Member;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,6 +51,9 @@ public class Dog extends BaseTimeEntity {
 
     @Column(nullable = true, length = 255)
     private String dogImageUrl;
+
+    @OneToMany(mappedBy = "dog", cascade = CascadeType.ALL)
+    private List<DogWalkLog> dogWalkLogs;
 
     public static Dog from(Member owner,
                            DogType dogType,
