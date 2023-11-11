@@ -57,6 +57,7 @@ public class WalkLogService {
         for (DogWalkLog dogWalkLog : dogWalkLogs) {
             walkedDogs.add(WalkedDogResponseDto.builder()
                     .dogName(dogWalkLog.getDog().getDogName())
+                    .dogImageUrl(dogWalkLog.getDog().getDogImageUrl())
                     .burnedCalorie(dogWalkLog.getBurnedCalorie())
                     .build());
         }

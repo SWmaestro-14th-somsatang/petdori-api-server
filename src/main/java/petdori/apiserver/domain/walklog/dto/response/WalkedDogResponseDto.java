@@ -9,6 +9,8 @@ import lombok.Getter;
 public class WalkedDogResponseDto {
     @JsonProperty("dog_name")
     private String dogName;
+    @JsonProperty("dog_image_url")
+    private String dogImageUrl;
     @JsonProperty("burned_calorie")
     private Long burnedCalorie;
 }
