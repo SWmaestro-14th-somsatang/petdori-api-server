@@ -15,6 +15,7 @@ import petdori.apiserver.domain.walklog.entity.WalkLog;
 import petdori.apiserver.domain.walklog.repository.DogWalkLogRepository;
 import petdori.apiserver.domain.walklog.repository.WalkLogRepository;
 import petdori.apiserver.domain.walklog.repository.WalkLogRepository.RecentlyLogDto;
+import petdori.apiserver.global.common.MemberExtractor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,43 +24,28 @@ import java.util.List;
 @Slf4j
 @Service
 public class WalkLogService {
-    private final MemberRepository memberRepository;
+    private final MemberExtractor memberExtractor;
     private final WalkLogRepository walkLogRepository;
     private final DogWalkLogRepository dogWalkLogRepository;
 
     public List<RecentlyLogDto> getWalkLogsForLast30days() {
-        // 인증된 사용자이므로 이메일을 가져올 수 있다
-        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new MemberNotExistException(memberEmail));
-
+        Member member = memberExtractor.getAuthenticatedMember();
         return walkLogRepository
                 .findStartedTimeAndWalkedDistanceForLast30Days(member.getId());
     }
 
     public List<WalkLogSummaryResponseDto> getMonthlyWalkLogs(int year, int month) {
-        // 인증된 사용자이므로 이메일을 가져올 수 있다
-        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new MemberNotExistException(memberEmail));
-
+        Member member = memberExtractor.getAuthenticatedMember();
         return walkLogRepository.findByYearAndMonth(member, year, month);
     }
 
     public List<WalkLogSummaryResponseDto> getDailyWalkLogs(String walkedDate) {
-        // 인증된 사용자이므로 이메일을 가져올 수 있다
-        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new MemberNotExistException(memberEmail));
-
+        Member member = memberExtractor.getAuthenticatedMember();
         return walkLogRepository.findByMemberAndWalkedDate(member, LocalDate.parse(walkedDate));
     }
 
     public WalkLogDetailResponseDto getLogDetails(Long logId) {
-        // 인증된 사용자이므로 이메일을 가져올 수 있다
-        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new MemberNotExistException(memberEmail));
+        Member member = memberExtractor.getAuthenticatedMember();
 
         WalkLog walkLog = walkLogRepository.findByMemberAndId(member, logId).get();
         List<DogWalkLog> dogWalkLogs = dogWalkLogRepository.findByWalkLogId(logId);
