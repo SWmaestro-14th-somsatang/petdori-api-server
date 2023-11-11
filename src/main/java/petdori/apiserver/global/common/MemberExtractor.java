@@ -15,9 +15,7 @@ public class MemberExtractor {
     public Member getAuthenticatedMember() {
         // 인증된 사용자이므로 이메일을 가져올 수 있다
         String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(memberEmail)
+        return memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new MemberNotExistException(memberEmail));
-
-        return member;
     }
 }
