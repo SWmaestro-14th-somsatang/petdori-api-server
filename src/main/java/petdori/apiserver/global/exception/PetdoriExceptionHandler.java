@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import petdori.apiserver.domain.auth.exception.member.MemberException;
 import petdori.apiserver.domain.facility.dto.response.FacilityTypeNotExistResponseDto;
 import petdori.apiserver.domain.facility.exception.FacilityTypeNotExistException;
+import petdori.apiserver.domain.walklog.exception.WalkLogException;
 import petdori.apiserver.global.common.BaseResponse;
 import petdori.apiserver.domain.auth.exception.oauth2.Oauth2Exception;
 import petdori.apiserver.domain.auth.exception.token.CustomJwtException;
@@ -106,6 +107,14 @@ public class PetdoriExceptionHandler {
                 .body(BaseResponse.createErrorResponse(
                         facilityTypeNotExistResponseDto,
                         ex.getFacilityErrorCode().getErrorMessage()
+                ));
+    }
+
+    @ExceptionHandler(WalkLogException.class)
+    public ResponseEntity<BaseResponse<?>> handleWalkLogException(WalkLogException ex) {
+        return ResponseEntity.status(ex.getWalkLogErrorCode().getHttpStatus())
+                .body(BaseResponse.createErrorResponseWithNoContent(
+                        ex.getWalkLogErrorCode().getErrorMessage()
                 ));
     }
 }

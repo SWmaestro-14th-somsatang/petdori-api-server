@@ -12,6 +12,7 @@ import petdori.apiserver.domain.walklog.dto.response.WalkLogSummaryResponseDto;
 import petdori.apiserver.domain.walklog.dto.response.WalkedDogResponseDto;
 import petdori.apiserver.domain.walklog.entity.DogWalkLog;
 import petdori.apiserver.domain.walklog.entity.WalkLog;
+import petdori.apiserver.domain.walklog.exception.WalkLogNotFoundException;
 import petdori.apiserver.domain.walklog.repository.DogWalkLogRepository;
 import petdori.apiserver.domain.walklog.repository.WalkLogRepository;
 import petdori.apiserver.domain.walklog.repository.WalkLogRepository.RecentlyLogDto;
@@ -47,7 +48,9 @@ public class WalkLogService {
     public WalkLogDetailResponseDto getLogDetails(Long logId) {
         Member member = memberExtractor.getAuthenticatedMember();
 
-        WalkLog walkLog = walkLogRepository.findByMemberAndId(member, logId).get();
+        WalkLog walkLog = walkLogRepository
+                .findByMemberAndId(member, logId).orElseThrow(
+                        () -> new WalkLogNotFoundException());
         List<DogWalkLog> dogWalkLogs = dogWalkLogRepository.findByWalkLogId(logId);
 
         List<WalkedDogResponseDto> walkedDogs = new ArrayList<>();
