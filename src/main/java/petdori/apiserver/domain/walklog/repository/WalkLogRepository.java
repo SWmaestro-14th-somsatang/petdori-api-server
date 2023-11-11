@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface WalkLogRepository extends JpaRepository<WalkLog, Long> {
     @Query(name = "recently_log_dto", nativeQuery = true,
@@ -41,6 +42,7 @@ public interface WalkLogRepository extends JpaRepository<WalkLog, Long> {
             "WHERE w.member = :member AND DATE(w.startedTime) = :walkedDate " +
             "ORDER BY w.startedTime DESC")
     List<WalkLogSummaryResponseDto> findByMemberAndWalkedDate(Member member, LocalDate walkedDate);
+    Optional<WalkLog> findByMemberAndId(Member member, Long id);
 
     interface RecentlyLogDto {
         @JsonProperty("walk_date")
