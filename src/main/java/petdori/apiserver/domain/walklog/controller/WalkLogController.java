@@ -3,7 +3,7 @@ package petdori.apiserver.domain.walklog.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import petdori.apiserver.domain.walklog.dto.response.MonthlyLogResponseDto;
+import petdori.apiserver.domain.walklog.dto.response.WalkLogSummaryResponseDto;
 import petdori.apiserver.domain.walklog.repository.WalkLogRepository.RecentlyLogDto;
 import petdori.apiserver.domain.walklog.service.WalkLogService;
 import petdori.apiserver.global.common.BaseResponse;
@@ -25,9 +25,16 @@ public class WalkLogController {
     }
 
     @GetMapping("/monthly-logs")
-    public BaseResponse<List<MonthlyLogResponseDto>> getMonthlyLogs(@RequestParam(value = "year") int year,
-                                                                     @RequestParam(value = "month") int month) {
-        List<MonthlyLogResponseDto> monthlyLogs = walkLogService.getMonthlyLogs(year, month);
+    public BaseResponse<List<WalkLogSummaryResponseDto>> getMonthlyLogs(@RequestParam(value = "year") int year,
+                                                                        @RequestParam(value = "month") int month) {
+        List<WalkLogSummaryResponseDto> monthlyLogs = walkLogService.getMonthlyLogs(year, month);
+        return BaseResponse.createSuccessResponse(monthlyLogs);
+    }
+
+    @GetMapping("/daily-logs")
+    public BaseResponse<List<WalkLogSummaryResponseDto>> getDailyLogs(@RequestParam(value = "date") String date) {
+        log.info("date: {}", date);
+        List<WalkLogSummaryResponseDto> monthlyLogs = walkLogService.getDailyLogs(date);
         return BaseResponse.createSuccessResponse(monthlyLogs);
     }
 

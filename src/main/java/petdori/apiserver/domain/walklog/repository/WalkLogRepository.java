@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import petdori.apiserver.domain.auth.entity.member.Member;
-import petdori.apiserver.domain.walklog.dto.response.MonthlyLogResponseDto;
+import petdori.apiserver.domain.walklog.dto.response.WalkLogSummaryResponseDto;
 import petdori.apiserver.domain.walklog.entity.WalkLog;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface WalkLogRepository extends JpaRepository<WalkLog, Long> {
@@ -28,11 +29,18 @@ public interface WalkLogRepository extends JpaRepository<WalkLog, Long> {
     List<RecentlyLogDto> findStartedTimeAndWalkedDistanceForLast30Days(Long memberId);
 
     @Query(value = "SELECT " +
-            "new petdori.apiserver.domain.walklog.dto.response.MonthlyLogResponseDto(w.id, w.walkingImageUrl, w.startedTime, w.walkingTime, w.walkedDistance)" +
+            "new petdori.apiserver.domain.walklog.dto.response.WalkLogSummaryResponseDto(w.id, w.walkingImageUrl, w.startedTime, w.walkingTime, w.walkedDistance)" +
             "FROM WalkLog w " +
             "WHERE w.member = :member AND YEAR(w.startedTime) = :year AND MONTH(w.startedTime) = :month " +
             "ORDER BY w.startedTime DESC")
-    List<MonthlyLogResponseDto> findByYearAndMonth(@Param("member") Member member, @Param("year") int year, @Param("month") int month);
+    List<WalkLogSummaryResponseDto> findByYearAndMonth(@Param("member") Member member, @Param("year") int year, @Param("month") int month);
+
+    @Query(value = "SELECT " +
+            "new petdori.apiserver.domain.walklog.dto.response.WalkLogSummaryResponseDto(w.id, w.walkingImageUrl, w.startedTime, w.walkingTime, w.walkedDistance)" +
+            "FROM WalkLog w " +
+            "WHERE w.member = :member AND DATE(w.startedTime) = :walkedDate " +
+            "ORDER BY w.startedTime DESC")
+    List<WalkLogSummaryResponseDto> findByMemberAndWalkedDate(Member member, LocalDate walkedDate);
 
     interface RecentlyLogDto {
         @JsonProperty("walk_date")
