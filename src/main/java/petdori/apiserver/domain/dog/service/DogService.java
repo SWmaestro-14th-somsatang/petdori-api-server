@@ -60,37 +60,26 @@ public class DogService {
     }
 
     @Transactional(readOnly = true)
-    public List<MyDogResponseDto> getMyAllDogs() {
-        List<MyDogResponseDto> myDogs = new ArrayList<>();
+    public List<DogDetailResponseDto> getMyAllDogs() {
+        List<DogDetailResponseDto> myDogs = new ArrayList<>();
         Member owner = memberExtractor.getAuthenticatedMember();
 
         for (Dog dog : owner.getDogs()) {
-            Long dogId = dog.getId();
-            String dogImageUrl = dog.getDogImageUrl();
-            String dogName = dog.getDogName();
-            String dogTypeName = dog.getDogType().getTypeName();
-
-            myDogs.add(MyDogResponseDto.builder().dogId(dogId).dogImageUrl(dogImageUrl)
-                    .dogName(dogName).dogTypeName(dogTypeName).build());
+            myDogs.add(DogDetailResponseDto.builder()
+                    .dogId(dog.getId())
+                    .dogName(dog.getDogName())
+                    .dogTypeName(dog.getDogType().getTypeName())
+                    .dogGender(dog.getDogGender().name())
+                    .isNeutered(dog.isNeutered())
+                    .dogWeight(dog.getDogWeight())
+                    .dogBirth(dog.getDogBirth())
+                    .dogImageUrl(dog.getDogImageUrl())
+                    .build());
         }
 
         return myDogs;
     }
 
-    @Transactional(readOnly = true)
-    public DogDetailResponseDto getDogDetail(Long dogId) {
-        Dog dog = getMyDog(dogId);
-        return DogDetailResponseDto.builder()
-                .dogId(dog.getId())
-                .dogImageUrl(dog.getDogImageUrl())
-                .dogName(dog.getDogName())
-                .dogTypeName(dog.getDogType().getTypeName())
-                .dogGender(dog.getDogGender().name())
-                .isNeutered(dog.isNeutered())
-                .dogWeight(dog.getDogWeight())
-                .dogBirth(dog.getDogBirth())
-                .build();
-    }
 
     @Transactional
     public void deleteDog(Long dogId) {
