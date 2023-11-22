@@ -45,16 +45,9 @@ public class DogController {
     }
 
     @GetMapping("/my-dogs")
-    public BaseResponse<List<MyDogResponseDto>> getMyAllDogs() {
-        List<MyDogResponseDto> myDogs = dogService.getMyAllDogs();
+    public BaseResponse<List<DogDetailResponseDto>> getMyAllDogs() {
+        List<DogDetailResponseDto> myDogs = dogService.getMyAllDogs();
         return BaseResponse.createSuccessResponse(myDogs);
-    }
-
-    @GetMapping("/{dogId}")
-    public BaseResponse<DogDetailResponseDto> getMyDog(@PathVariable Long dogId) {
-        DogDetailResponseDto dogDetail = dogService.getDogDetail(dogId);
-        return BaseResponse.createSuccessResponse(dogDetail);
-
     }
 
     @DeleteMapping("/{dogId}")
